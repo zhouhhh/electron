@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 const createWindow = () => {
     let mainWin = new BrowserWindow({
@@ -25,6 +25,10 @@ const createWindow = () => {
     })
 
     mainWin.loadFile('index.html')
+
+    //自动打开 DevTools
+    mainWin.webContents.openDevTools();
+
     //默认不显示窗体，等内容加载后在显示窗口
     mainWin.on('ready-to-show', () => {
         mainWin.show()
@@ -58,6 +62,18 @@ const createWindow = () => {
 app.on('ready', () => {
     console.log('1111--->ready');
     createWindow()
+    //点击按钮打开新页面
+    ipcMain.on('openWindow', () => {
+        let indexMain = new BrowserWindow({
+            width: 200,
+            height: 200
+        })
+        indexMain.loadFile('list.html')
+
+        indexMain.on('close', () => {
+            indexMain = null
+        })
+    })
 })
 
 app.on('window-all-closed', () => {
