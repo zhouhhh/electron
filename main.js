@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
+const path = require('path');
 
 const createWindow = () => {
     let mainWin = new BrowserWindow({
@@ -12,7 +13,7 @@ const createWindow = () => {
         minHeight: 400,
         minWidth: 600,//可以设置窗口的最大最小宽高
         resizable: true,//是否允许缩放应用的窗口大小
-        icon: 'favicon.ico',//可以设置图标
+        icon: path.join(__dirname, 'favicon.ico'),//可以设置图标
         title: '学习Electron',//这里的title要生效要先删除index.html的title
         frame: true,//自定义menu，设置为false，不显示title
         autoHideMenuBar: true,
