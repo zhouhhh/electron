@@ -28,3 +28,25 @@ holder.addEventListener('dragover', (e) => {
     e.preventDefault()
     e.stopPropagation()
 })
+
+const webview = document.querySelector('#webview')
+
+webview.addEventListener('did-start-loading', (e) => {
+    console.log('webview加载中');
+})
+webview.addEventListener('did-stop-loading', (e) => {
+    console.log('webview加载完成', [webview]);
+
+    //修改webview内页面的样式
+    webview.insertCSS(`#su{background:red !important;}`)
+
+    //在webview內的页面执行js代码
+    webview.executeJavaScript(`
+        setTimeout(() => {
+            const input = document.querySelector('#kw')
+            const btn = document.querySelector('#su')
+            input.value = 'electron'
+            btn.click()
+        }, 2000)
+    `)
+})
