@@ -1,0 +1,16 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+}
+
+#holder{
+  width: 400px;
+  height: 200px;
+  background-color: grey;
+}
+#holder h1{
+  font-size: 20px;
+}
