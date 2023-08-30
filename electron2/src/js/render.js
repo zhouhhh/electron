@@ -1,7 +1,9 @@
 const fs = require('fs')
+const { ipcRenderer } = require('electron')
 
 const holder = document.querySelector('#holder')
 const readList = document.querySelector('#readList')
+const btn = document.querySelector('#btn')
 holder.addEventListener('drop', (e) => {
     e.preventDefault()//取消默认
     e.stopPropagation()//阻止冒泡
@@ -50,3 +52,17 @@ webview.addEventListener('did-stop-loading', (e) => {
         }, 2000)
     `)
 })
+//渲染进程接收主进程的消息
+ipcRenderer.on('main-send-message-to-second-window', (event, arg) => {
+    console.log('渲染进程接收主进程的消息', event, arg)
+})
+//渲染进程给主进程发消息
+ipcRenderer.send('second-window-send-message-to-main', '渲染进程给主进程发消息')
+
+ipcRenderer.on('main-window-reply', (event, arg) => {
+    console.log('主进程回复的消息', event, arg)
+})
+
+btn.onclick = function () {
+    ipcRenderer.send('click-open-window')
+}

@@ -1,10 +1,35 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+
+//监听渲染进程发送过来的second-window-send-message-to-main事件
+ipcMain.on('second-window-send-message-to-main', (event, arg) => {
+  console.log('2323', event, arg);
+  event.reply('main-window-reply', '这是主进程发来的消息')
+})
+
+//监听渲染进程打开新窗口
+ipcMain.on('click-open-window', (event, arg) => {
+  cWindow()
+})
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+const cWindow = () => {
+  const mainWindow = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+  });
+  mainWindow.loadFile(path.join(__dirname, 'list.html'));
+  // Open the DevTools.
+  mainWindow.webContents.openDevTools();
+};
 
 const createWindow = () => {
   // Create the browser window.
@@ -24,6 +49,11 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  setTimeout(() => {
+    //主进程主动给渲染进程发消息
+    mainWindow.webContents.send('main-send-message-to-second-window', '主进程主动给渲染进程发消息');
+  }, 2000)
 };
 
 // This method will be called when Electron has finished
