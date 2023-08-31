@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 
 //监听渲染进程发送过来的second-window-send-message-to-main事件
@@ -53,7 +53,35 @@ const createWindow = () => {
   setTimeout(() => {
     //主进程主动给渲染进程发消息
     mainWindow.webContents.send('main-send-message-to-second-window', '主进程主动给渲染进程发消息');
+
+    //openFile允许选择文件
+    //openDirectory允许选择文件夹
+    //multiSelections允许多选
+    //showHiddenFiles显示隐藏文件
+    //createDirectory允许创建文件夹
+    dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections']
+    }).then((result) => {
+      console.log(result.filePaths, result.canceled);
+    })
   }, 2000)
+
+  mainWindow.on('close', (e) => {
+    e.preventDefault()
+    dialog.showMessageBox(mainWindow, {
+      type: 'warning',
+      title: '关闭',
+      message: '是否要关闭窗口？',
+      buttons: ['取消', '残忍关闭']
+    }).then((index) => {
+      console.log('index', index);
+      if (index.response == 1) {
+        // mainWindow = null
+        app.exit()
+        // mainWindow.close()
+      }
+    })
+  })
 };
 
 // This method will be called when Electron has finished
